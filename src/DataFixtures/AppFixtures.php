@@ -57,6 +57,7 @@ class AppFixtures extends Fixture {
                 $user->setName($faker->lastName);
                 $user->setFirstname($faker->firstName);
                 $user->setCreatedAt(date_create_immutable());
+                $user->setRole(["ROLE_USER"]);
                 $user->setCustomer($customers);
                 $manager->persist($user);
             }
