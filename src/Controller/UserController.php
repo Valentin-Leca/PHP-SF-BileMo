@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use JMS\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController {
 
@@ -47,11 +48,17 @@ class UserController extends AbstractController {
 
     #[Route('/api/user', name: 'create_user', methods: ['POST'])]
     public function createUser(SerializerInterface $serializer, Request $request, EntityManagerInterface $entityManager,
-                               UrlGeneratorInterface $urlGenerator): JsonResponse {
+                               UrlGeneratorInterface $urlGenerator, ValidatorInterface $validator): JsonResponse {
 
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
         $user->setCreatedAt(date_create_immutable());
         $user->setCustomer($this->getUser());
+
+        // On vérifie les erreurs
+        $errors = $validator->validate($user);
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_BAD_REQUEST, [], true);
+        }
 
         $entityManager->persist($user);
         $entityManager->flush();

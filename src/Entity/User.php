@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 use Hateoas\Configuration\Annotation as Hateoas;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @Hateoas\Relation(
@@ -47,9 +48,15 @@ class User
 
     #[ORM\Column(length: 255)]
     #[Groups(['getUsers', 'getUser'])]
+    #[Assert\NotBlank(message: "Le nom de l'utilisateur est obligatoire.")]
+    #[Assert\Length(min: 2, max: 255, minMessage: "Le nom de l'utilisateur doit faire au moins {{ limit }} caractères.",
+        maxMessage: "Le nom de l'utilisateur doit faire maximum {{ limit }} caractères.")]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le prénom de l'utilisateur est obligatoire.")]
+    #[Assert\Length(min: 2, max: 255, minMessage: "Le prénom de l'utilisateur doit faire au moins {{ limit }} caractères.",
+        maxMessage: "Le prénom de l'utilisateur doit faire maximum {{ limit }} caractères.")]
     #[Groups(['getUsers', 'getUser'])]
     private ?string $firstname = null;
 
