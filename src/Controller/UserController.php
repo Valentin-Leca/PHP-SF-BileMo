@@ -36,8 +36,9 @@ class UserController extends AbstractController {
     #[Route('/api/user/{id}', name: 'get_user', methods: ['GET'])]
     public function getOneUser(User $user, SerializerInterface $serializer): JsonResponse {
 
-        $context = SerializationContext::create()->setGroups(["getUser"]);
+        $context = SerializationContext::create()->setGroups(["getUser", "getCustomer"]);
         $jsonUser = $serializer->serialize($user, 'json', $context);
+
         return new JsonResponse(
             $jsonUser,
             Response::HTTP_OK,
@@ -110,3 +111,6 @@ class UserController extends AbstractController {
         );
     }
 }
+
+
+// TODO timer les issues sur GITHUB
