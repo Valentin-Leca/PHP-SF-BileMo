@@ -37,7 +37,7 @@ class Customer implements \Symfony\Component\Security\Core\User\PasswordAuthenti
     #[ORM\Column]
     private array $role = [];
 
-    #[ORM\OneToMany(mappedBy: 'customer', targetEntity: User::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'customer', targetEntity: User::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $users;
 
     public function __construct()
