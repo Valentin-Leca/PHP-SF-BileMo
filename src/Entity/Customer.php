@@ -15,6 +15,7 @@ class Customer implements \Symfony\Component\Security\Core\User\PasswordAuthenti
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getCustomer'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

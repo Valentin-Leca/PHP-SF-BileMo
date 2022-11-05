@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,9 +19,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserController extends AbstractController {
 
     #[Route('/api/users', name: 'get_users', methods: ['GET'])]
+    #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour consulter tous vos utilisateurs.')]
     public function getAllUsers(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse {
 
-        $allUsers = $userRepository->findAll();
+        $allUsers = $userRepository->findBy(['customer' => $this->getUser()]);
         $context = SerializationContext::create()->setGroups(["getUsers"]);
         $jsonAllUsers = $serializer->serialize($allUsers, 'json', $context);
 
@@ -34,7 +36,22 @@ class UserController extends AbstractController {
     }
 
     #[Route('/api/user/{id}', name: 'get_user', methods: ['GET'])]
-    public function getOneUser(User $user, SerializerInterface $serializer): JsonResponse {
+    #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour consulter un utilisateur.')]
+    public function getOneUser(User $user, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse {
+
+        $user = $userRepository->findOneBy(['id' => $user->getId(), 'customer' => $this->getUser()]);
+
+        if($user === null) {
+            return new JsonResponse(
+                [
+                    'status' => 401,
+                    'message' => 'Non authorisé'
+                ],
+                Response::HTTP_UNAUTHORIZED,
+                []
+            );
+        }
+
 
         $context = SerializationContext::create()->setGroups(["getUser", "getCustomer"]);
         $jsonUser = $serializer->serialize($user, 'json', $context);
@@ -48,6 +65,7 @@ class UserController extends AbstractController {
     }
 
     #[Route('/api/user', name: 'create_user', methods: ['POST'])]
+    #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour créer un utilisateur.')]
     public function createUser(SerializerInterface $serializer, Request $request, EntityManagerInterface $entityManager,
                                UrlGeneratorInterface $urlGenerator, ValidatorInterface $validator): JsonResponse {
 
@@ -78,6 +96,7 @@ class UserController extends AbstractController {
     }
 
     #[Route('/api/user/{id}', name: 'update_user', methods: ['PUT'])]
+    #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour mettre à jour un utilisateur.')]
     public function updateUser(SerializerInterface $serializer, Request $request, EntityManagerInterface $entityManager,
                                User $currentUser, UrlGeneratorInterface $urlGenerator): JsonResponse {
 
@@ -100,6 +119,7 @@ class UserController extends AbstractController {
     }
 
     #[Route('/api/user/{id}', name: 'delete_user', methods: ['DELETE'])]
+    #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour supprimer un utilisateur.')]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse {
 
         $entityManager->remove($user);
