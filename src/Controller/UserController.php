@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,13 +19,25 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController {
 
-    #[Route('/api/users', name: 'get_users', methods: ['GET'])]
+    #[Route('/api/users/{page}', name: 'get_users', methods: ['GET'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour consulter tous vos utilisateurs.')]
-    public function getAllUsers(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse {
+    public function getAllUsers(UserRepository $userRepository, SerializerInterface $serializer, PaginatorInterface $paginator,
+                                Request $request): JsonResponse {
+
+        $this->denyAccessUnlessGranted('ROLE_CUSTOMER', User::class);
 
         $allUsers = $userRepository->findBy(['customer' => $this->getUser()]);
+
+        $page = $request->get('page', 1);
+
+        $allUsersPaginated = $paginator->paginate(
+            $allUsers,
+            $page,
+            10
+        );
+
         $context = SerializationContext::create()->setGroups(["getUsers"]);
-        $jsonAllUsers = $serializer->serialize($allUsers, 'json', $context);
+        $jsonAllUsers = $serializer->serialize($allUsersPaginated->getItems(), 'json', $context);
 
         return new JsonResponse(
             $jsonAllUsers,
@@ -32,7 +45,6 @@ class UserController extends AbstractController {
             [],
             true
         );
-
     }
 
     #[Route('/api/user/{id}', name: 'get_user', methods: ['GET'])]
