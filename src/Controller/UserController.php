@@ -17,14 +17,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+#[Route('/api')]
 class UserController extends AbstractController {
 
-    #[Route('/api/users/{page}', name: 'get_users', methods: ['GET'])]
+    #[Route('/users/{page}', name: 'get_users', methods: ['GET'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour consulter tous vos utilisateurs.')]
     public function getAllUsers(UserRepository $userRepository, SerializerInterface $serializer, PaginatorInterface $paginator,
                                 Request $request): JsonResponse {
 
-        $this->denyAccessUnlessGranted('ROLE_CUSTOMER', User::class);
+        $this->denyAccessUnlessGranted('VIEW', User::class);
 
         $allUsers = $userRepository->findBy(['customer' => $this->getUser()]);
 
@@ -47,11 +48,11 @@ class UserController extends AbstractController {
         );
     }
 
-    #[Route('/api/user/{id}', name: 'get_user', methods: ['GET'])]
+    #[Route('/user/{id}', name: 'get_user', methods: ['GET'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour consulter un utilisateur.')]
     public function getOneUser(User $user, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse {
 
-        $this->denyAccessUnlessGranted('ROLE_CUSTOMER', User::class);
+        $this->denyAccessUnlessGranted('VIEW', $user);
 
         $user = $userRepository->findOneBy(['id' => $user->getId(), 'customer' => $this->getUser()]);
 
@@ -77,7 +78,7 @@ class UserController extends AbstractController {
         );
     }
 
-    #[Route('/api/user', name: 'create_user', methods: ['POST'])]
+    #[Route('/user', name: 'create_user', methods: ['POST'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour créer un utilisateur.')]
     public function createUser(SerializerInterface $serializer, Request $request, EntityManagerInterface $entityManager,
                                UrlGeneratorInterface $urlGenerator, ValidatorInterface $validator): JsonResponse {
@@ -108,12 +109,12 @@ class UserController extends AbstractController {
         );
     }
 
-    #[Route('/api/user/{id}', name: 'update_user', methods: ['PUT'])]
+    #[Route('/user/{id}', name: 'update_user', methods: ['PUT'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour mettre à jour un utilisateur.')]
     public function updateUser(SerializerInterface $serializer, Request $request, EntityManagerInterface $entityManager,
                                User $currentUser, UrlGeneratorInterface $urlGenerator): JsonResponse {
 
-        $this->denyAccessUnlessGranted('ROLE_CUSTOMER', User::class);
+        $this->denyAccessUnlessGranted('EDIT', User::class);
 
         $newUser = $serializer->deserialize($request->getContent(), User::class, 'json');
 
@@ -133,11 +134,11 @@ class UserController extends AbstractController {
 
     }
 
-    #[Route('/api/user/{id}', name: 'delete_user', methods: ['DELETE'])]
+    #[Route('/user/{id}', name: 'delete_user', methods: ['DELETE'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour supprimer un utilisateur.')]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse {
 
-        $this->denyAccessUnlessGranted('ROLE_CUSTOMER', User::class);
+        $this->denyAccessUnlessGranted('DELETE', User::class);
 
         $entityManager->remove($user);
         $entityManager->flush();
@@ -148,6 +149,3 @@ class UserController extends AbstractController {
         );
     }
 }
-
-
-// TODO timer les issues sur GITHUB
