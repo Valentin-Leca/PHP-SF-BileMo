@@ -51,19 +51,20 @@ class UserController extends AbstractController {
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour consulter un utilisateur.')]
     public function getOneUser(User $user, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse {
 
+        $this->denyAccessUnlessGranted('ROLE_CUSTOMER', User::class);
+
         $user = $userRepository->findOneBy(['id' => $user->getId(), 'customer' => $this->getUser()]);
 
         if($user === null) {
             return new JsonResponse(
                 [
-                    'status' => 401,
+                    'status' => 403,
                     'message' => 'Non authorisé'
                 ],
-                Response::HTTP_UNAUTHORIZED,
+                Response::HTTP_FORBIDDEN,
                 []
             );
         }
-
 
         $context = SerializationContext::create()->setGroups(["getUser", "getCustomer"]);
         $jsonUser = $serializer->serialize($user, 'json', $context);
@@ -112,6 +113,8 @@ class UserController extends AbstractController {
     public function updateUser(SerializerInterface $serializer, Request $request, EntityManagerInterface $entityManager,
                                User $currentUser, UrlGeneratorInterface $urlGenerator): JsonResponse {
 
+        $this->denyAccessUnlessGranted('ROLE_CUSTOMER', User::class);
+
         $newUser = $serializer->deserialize($request->getContent(), User::class, 'json');
 
         $currentUser->setName($newUser->getName());
@@ -133,6 +136,8 @@ class UserController extends AbstractController {
     #[Route('/api/user/{id}', name: 'delete_user', methods: ['DELETE'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour supprimer un utilisateur.')]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse {
+
+        $this->denyAccessUnlessGranted('ROLE_CUSTOMER', User::class);
 
         $entityManager->remove($user);
         $entityManager->flush();
