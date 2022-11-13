@@ -110,7 +110,7 @@ class UserController extends AbstractController {
         );
     }
 
-    #[Route('/user/{id}', name: 'update_user', methods: ['PUT'])]
+    #[Route('/user/update/{id}', name: 'update_user', methods: ['PUT'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour mettre à jour un utilisateur.')]
     public function updateUser(SerializerInterface $serializer, Request $request, EntityManagerInterface $entityManager,
                                User $currentUser, UrlGeneratorInterface $urlGenerator): JsonResponse {
@@ -139,7 +139,6 @@ class UserController extends AbstractController {
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour supprimer un utilisateur.')]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse {
 
-//        $this->denyAccessUnlessGranted('DELETE', User::class);
         $this->isGranted('DELETE', User::class);
 
         $entityManager->remove($user);
