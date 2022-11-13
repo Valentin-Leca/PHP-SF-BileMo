@@ -5,6 +5,19 @@ namespace App\Entity;
 use App\Repository\PhoneRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
+use Hateoas\Configuration\Annotation as Hateoas;
+
+/**
+ * @Hateoas\Relation(
+ *      "self",
+ *      href = @Hateoas\Route(
+ *          "get_phone",
+ *          parameters = { "id" = "expr(object.getId())" }
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups="getPhones")
+ * )
+ */
 
 #[ORM\Entity(repositoryClass: PhoneRepository::class)]
 class Phone
@@ -12,24 +25,31 @@ class Phone
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getPhones'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getPhones'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getPhones'])]
     private ?string $brand = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['getPhones'])]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(['getPhones'])]
     private ?float $price = null;
 
     #[ORM\Column]
+    #[Groups(['getPhones'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['getPhones'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int

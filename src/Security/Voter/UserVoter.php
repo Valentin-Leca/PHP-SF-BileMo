@@ -9,6 +9,11 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserVoter extends Voter {
+
+    const VIEW = 'VIEW';
+    const EDIT = 'EDIT';
+    const DELETE = 'DELETE';
+
     private Security $security;
 
     public function __construct(Security $security)
@@ -18,14 +23,12 @@ class UserVoter extends Voter {
 
     protected function supports(string $attribute, $subject): bool {
 
-        return in_array($attribute, ['VIEW', 'EDIT', 'DELETE'])
+        return in_array($attribute, [self::VIEW, self::EDIT, self::DELETE])
             && $subject instanceof Customer;
 
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool {
-
-        dd($subject);
 
         $user = $token->getUser();
 
@@ -38,9 +41,9 @@ class UserVoter extends Voter {
         }
 
         switch ($attribute) {
-            case 'VIEW':
-            case 'EDIT':
-            case 'DELETE':
+            case self::VIEW:
+            case self::EDIT:
+            case self::DELETE:
                 if ($user === $subject->getUser()) {
                     return true;
                 }

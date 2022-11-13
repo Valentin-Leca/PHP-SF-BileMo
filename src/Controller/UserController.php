@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Security\Voter\UserVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use Knp\Component\Pager\PaginatorInterface;
@@ -25,7 +26,7 @@ class UserController extends AbstractController {
     public function getAllUsers(UserRepository $userRepository, SerializerInterface $serializer, PaginatorInterface $paginator,
                                 Request $request): JsonResponse {
 
-        $this->denyAccessUnlessGranted('VIEW', User::class);
+        $this->isGranted('VIEW', User::class);
 
         $allUsers = $userRepository->findBy(['customer' => $this->getUser()]);
 
@@ -52,7 +53,7 @@ class UserController extends AbstractController {
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour consulter un utilisateur.')]
     public function getOneUser(User $user, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse {
 
-        $this->denyAccessUnlessGranted('VIEW', $user);
+        $this->isGranted('VIEW', User::class);
 
         $user = $userRepository->findOneBy(['id' => $user->getId(), 'customer' => $this->getUser()]);
 
@@ -114,7 +115,7 @@ class UserController extends AbstractController {
     public function updateUser(SerializerInterface $serializer, Request $request, EntityManagerInterface $entityManager,
                                User $currentUser, UrlGeneratorInterface $urlGenerator): JsonResponse {
 
-        $this->denyAccessUnlessGranted('EDIT', User::class);
+        $this->isGranted('EDIT', User::class);
 
         $newUser = $serializer->deserialize($request->getContent(), User::class, 'json');
 
@@ -134,11 +135,12 @@ class UserController extends AbstractController {
 
     }
 
-    #[Route('/user/{id}', name: 'delete_user', methods: ['DELETE'])]
+    #[Route('/user/delete/{id}', name: 'delete_user', methods: ['DELETE'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour supprimer un utilisateur.')]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse {
 
-        $this->denyAccessUnlessGranted('DELETE', User::class);
+//        $this->denyAccessUnlessGranted('DELETE', User::class);
+        $this->isGranted('DELETE', User::class);
 
         $entityManager->remove($user);
         $entityManager->flush();
