@@ -15,15 +15,15 @@ class Customer implements \Symfony\Component\Security\Core\User\PasswordAuthenti
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getCustomer'])]
+    #[Groups(['getCustomer', 'getUsers'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getCustomer'])]
+    #[Groups(['getCustomer', 'getUsers'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getCustomer'])]
+    #[Groups(['getCustomer', 'getUsers'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]

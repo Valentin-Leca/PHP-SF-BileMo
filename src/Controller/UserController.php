@@ -17,6 +17,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/api')]
 class UserController extends AbstractController {
@@ -24,7 +26,7 @@ class UserController extends AbstractController {
     #[Route('/users/{page}', name: 'get_users', methods: ['GET'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour consulter tous vos utilisateurs.')]
     public function getAllUsers(UserRepository $userRepository, SerializerInterface $serializer, PaginatorInterface $paginator,
-                                Request $request): JsonResponse {
+                                Request $request, TagAwareCacheInterface $cache): JsonResponse {
 
         $this->isGranted('VIEW', User::class);
 
@@ -32,14 +34,20 @@ class UserController extends AbstractController {
 
         $page = $request->get('page', 1);
 
-        $allUsersPaginated = $paginator->paginate(
-            $allUsers,
-            $page,
-            10
-        );
+        $idCache = "getAllUsers-page=".$page."nbUser=10";
+
+        $usersList = $cache->get($idCache, function (ItemInterface $item) use ($allUsers, $paginator, $page) {
+            echo ("L'élément n'est pas encore en cache !\n");
+            $item->tag("usersCache");
+            return $paginator->paginate(
+                $allUsers,
+                $page,
+                10
+            );
+        });
 
         $context = SerializationContext::create()->setGroups(["getUsers"]);
-        $jsonAllUsers = $serializer->serialize($allUsersPaginated->getItems(), 'json', $context);
+        $jsonAllUsers = $serializer->serialize($usersList->getItems(), 'json', $context);
 
         return new JsonResponse(
             $jsonAllUsers,
@@ -51,22 +59,32 @@ class UserController extends AbstractController {
 
     #[Route('/user/{id}', name: 'get_user', methods: ['GET'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour consulter un utilisateur.')]
-    public function getOneUser(User $user, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse {
+    public function getOneUser(User $user, UserRepository $userRepository, SerializerInterface $serializer,
+                               TagAwareCacheInterface $cache): JsonResponse {
 
         $this->isGranted('VIEW', User::class);
 
         $user = $userRepository->findOneBy(['id' => $user->getId(), 'customer' => $this->getUser()]);
 
-        if($user === null) {
-            return new JsonResponse(
-                [
-                    'status' => 403,
-                    'message' => 'Non authorisé'
-                ],
-                Response::HTTP_FORBIDDEN,
-                []
-            );
-        }
+//        //A supprimer quand le Voter fonctionnera
+//        if($user === null) {
+//            return new JsonResponse(
+//                [
+//                    'status' => 403,
+//                    'message' => 'Non authorisé'
+//                ],
+//                Response::HTTP_FORBIDDEN,
+//                []
+//            );
+//        }
+
+        $idCache = "getOneUser-".$user->getId();
+
+        $user = $cache->get($idCache, function (ItemInterface $item) use ($user) {
+            echo ("L'élément n'est pas encore en cache !\n");
+            $item->tag("userCache");
+            return $user;
+        });
 
         $context = SerializationContext::create()->setGroups(["getUser", "getCustomer"]);
         $jsonUser = $serializer->serialize($user, 'json', $context);
@@ -137,10 +155,11 @@ class UserController extends AbstractController {
 
     #[Route('/user/delete/{id}', name: 'delete_user', methods: ['DELETE'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour supprimer un utilisateur.')]
-    public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse {
+    public function deleteUser(User $user, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse {
 
         $this->isGranted('DELETE', User::class);
 
+        $cache->invalidateTags(['usersCache', 'userCache']);
         $entityManager->remove($user);
         $entityManager->flush();
 
