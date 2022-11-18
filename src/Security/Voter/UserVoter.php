@@ -3,60 +3,63 @@
 namespace App\Security\Voter;
 
 use App\Entity\Customer;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserVoter extends Voter {
 
     const VIEW = 'VIEW';
-    const EDIT = 'EDIT';
+    const UPDATE = 'UPDATE';
     const DELETE = 'DELETE';
 
-    private Security $security;
-
-    public function __construct(Security $security)
-    {
-        $this->security = $security;
-    }
 
     protected function supports(string $attribute, mixed $subject): bool {
 
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::DELETE])) {
+        if (!in_array($attribute, [self::VIEW, self::UPDATE, self::DELETE])) {
             return false;
         }
 
-        if (!$subject instanceof Customer) {
+        if (!$subject instanceof User) {
             return false;
         }
 
         return true;
-
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
 
-        $user = $token->getUser();
+        $customer = $token->getUser();
 
-        if (!$user instanceof Customer) {
+        if (!$customer instanceof Customer) {
             return false;
         }
 
-        if ($this->security->isGranted('ROLE_CUSTOMER')) {
+        $user = $subject;
+
+        return match ($attribute) {
+          self::VIEW => $this->canView($customer, $user),
+          self::UPDATE, self::DELETE => $this->canEditOrDelete($customer, $user),
+          default => throw new \LogicException('This code should not be reached!')
+        };
+
+
+    }
+
+    private function canView(Customer $customer, User $user): bool {
+
+        // if they can edit, they can view
+        if ($this->canEditOrDelete($customer, $user)) {
             return true;
         }
 
-        switch ($attribute) {
-            case self::VIEW:
-            case self::EDIT:
-            case self::DELETE:
-                if ($user === $subject->getUser()) {
-                    return true;
-                }
-            break;
-        }
-
+        // the Post object could have, for example, a method `isPrivate()`
         return false;
+    }
+
+    private function canEditOrDelete(Customer $customer, User $user): bool {
+
+        // this assumes that the Post object has a `getOwner()` method
+        return $user->getCustomer() === $customer;
     }
 }

@@ -43,11 +43,11 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getUsers', 'getUser'])]
+    #[Groups(['getUser'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getUsers', 'getUser'])]
+    #[Groups(['getUser'])]
     #[Assert\NotBlank(message: "Le nom de l'utilisateur est obligatoire.")]
     #[Assert\Length(min: 2, max: 255, minMessage: "Le nom de l'utilisateur doit faire au moins {{ limit }} caractères.",
         maxMessage: "Le nom de l'utilisateur doit faire maximum {{ limit }} caractères.")]
@@ -57,16 +57,16 @@ class User
     #[Assert\NotBlank(message: "Le prénom de l'utilisateur est obligatoire.")]
     #[Assert\Length(min: 2, max: 255, minMessage: "Le prénom de l'utilisateur doit faire au moins {{ limit }} caractères.",
         maxMessage: "Le prénom de l'utilisateur doit faire maximum {{ limit }} caractères.")]
-    #[Groups(['getUsers', 'getUser'])]
+    #[Groups(['getUser'])]
     private ?string $firstname = null;
 
     #[ORM\Column]
-    #[Groups(['getUsers', 'getUser'])]
+    #[Groups(['getUser'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['getUsers', 'getUser'])]
+    #[Groups(['getUser'])]
     private ?Customer $customer = null;
 
     public function getId(): ?int

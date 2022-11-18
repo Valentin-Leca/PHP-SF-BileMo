@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use App\Security\Voter\UserVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use Knp\Component\Pager\PaginatorInterface;
@@ -37,7 +36,7 @@ class UserController extends AbstractController {
         $idCache = "getAllUsers-page=".$page."nbUser=10";
 
         $usersList = $cache->get($idCache, function (ItemInterface $item) use ($allUsers, $paginator, $page) {
-            echo ("L'élément n'est pas encore en cache !\n");
+            echo ("Création du cache !\n");
             $item->tag("usersCache");
             return $paginator->paginate(
                 $allUsers,
@@ -46,7 +45,7 @@ class UserController extends AbstractController {
             );
         });
 
-        $context = SerializationContext::create()->setGroups(["getUsers"]);
+        $context = SerializationContext::create()->setGroups(["getUser"]);
         $jsonAllUsers = $serializer->serialize($usersList->getItems(), 'json', $context);
 
         return new JsonResponse(
@@ -59,29 +58,14 @@ class UserController extends AbstractController {
 
     #[Route('/user/{id}', name: 'get_user', methods: ['GET'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour consulter un utilisateur.')]
-    public function getOneUser(User $user, UserRepository $userRepository, SerializerInterface $serializer,
-                               TagAwareCacheInterface $cache): JsonResponse {
+    public function getOneUser(User $user, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse {
 
-        $this->isGranted('VIEW', User::class);
-
-        $user = $userRepository->findOneBy(['id' => $user->getId(), 'customer' => $this->getUser()]);
-
-//        //A supprimer quand le Voter fonctionnera
-//        if($user === null) {
-//            return new JsonResponse(
-//                [
-//                    'status' => 403,
-//                    'message' => 'Non authorisé'
-//                ],
-//                Response::HTTP_FORBIDDEN,
-//                []
-//            );
-//        }
+        $this->denyAccessUnlessGranted('VIEW', $user);
 
         $idCache = "getOneUser-".$user->getId();
 
         $user = $cache->get($idCache, function (ItemInterface $item) use ($user) {
-            echo ("L'élément n'est pas encore en cache !\n");
+            echo ("Création du cache !\n");
             $item->tag("userCache");
             return $user;
         });
@@ -131,9 +115,11 @@ class UserController extends AbstractController {
     #[Route('/user/update/{id}', name: 'update_user', methods: ['PUT'])]
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour mettre à jour un utilisateur.')]
     public function updateUser(SerializerInterface $serializer, Request $request, EntityManagerInterface $entityManager,
-                               User $currentUser, UrlGeneratorInterface $urlGenerator): JsonResponse {
+                               User $currentUser, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse {
 
-        $this->isGranted('EDIT', User::class);
+        $this->denyAccessUnlessGranted('UPDATE', $currentUser);
+
+        $cache->invalidateTags(['usersCache', 'userCache']);
 
         $newUser = $serializer->deserialize($request->getContent(), User::class, 'json');
 
@@ -157,7 +143,7 @@ class UserController extends AbstractController {
     #[IsGranted('ROLE_CUSTOMER', message: 'Vous n\'avez pas les droits suffisants pour supprimer un utilisateur.')]
     public function deleteUser(User $user, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse {
 
-        $this->isGranted('DELETE', User::class);
+        $this->denyAccessUnlessGranted('DELETE', $user);
 
         $cache->invalidateTags(['usersCache', 'userCache']);
         $entityManager->remove($user);
