@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/src" isTestSource="false" packagePrefix="App\" />
+      <sourceFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/tests" isTestSource="true" packagePrefix="App\Tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/proxy-manager-bridge" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/stopwatch" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/doctrine-bridge" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/fakerphp/faker" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/yaml" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/var-exporter" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/var-dumper" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/string" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/service-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/runtime" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/maker-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/routing" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/polyfill-intl-normalizer" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/laminas/laminas-code" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/polyfill-intl-grapheme" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/http-kernel" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/http-foundation" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/framework-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/flex" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/finder" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/filesystem" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/event-dispatcher-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/event-dispatcher" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/error-handler" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/dotenv" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/deprecation-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/dependency-injection" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/console" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/config" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/cache-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/symfony/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/psr/log" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/psr/event-dispatcher" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/psr/container" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/psr/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/nikic/php-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/lexer" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/annotations" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/inflector" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/friendsofphp/proxy-manager-lts" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/event-manager" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/dbal" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/deprecations" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/orm" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/doctrine-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/sql-formatter" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/collections" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/common" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/instantiator" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/migrations" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/persistence" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/doctrine-migrations-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/sensio/framework-extra-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/doctrine-fixtures-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/PHP-SF-BileMo/vendor/doctrine/data-fixtures" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
