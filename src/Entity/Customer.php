@@ -6,6 +6,7 @@ use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
@@ -14,12 +15,15 @@ class Customer implements \Symfony\Component\Security\Core\User\PasswordAuthenti
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getCustomer', 'getUser'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getCustomer', 'getUser'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getCustomer', 'getUser'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
@@ -29,15 +33,17 @@ class Customer implements \Symfony\Component\Security\Core\User\PasswordAuthenti
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getCustomer'])]
     private ?string $mail = null;
 
     #[ORM\Column]
+    #[Groups(['getCustomer'])]
     private ?\DateTimeImmutable $registrationAt = null;
 
     #[ORM\Column]
     private array $role = [];
 
-    #[ORM\OneToMany(mappedBy: 'customer', targetEntity: User::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'customer', targetEntity: User::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $users;
 
     public function __construct()
