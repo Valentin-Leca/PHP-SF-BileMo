@@ -129,12 +129,16 @@ class UserController extends AbstractController {
         $entityManager->persist($currentUser);
         $entityManager->flush();
 
+        $context = SerializationContext::create()->setGroups(["getUser"]);
+        $jsonUser = $serializer->serialize($currentUser, 'json', $context);
+
         $location = $urlGenerator->generate('get_user', ['id' => $currentUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return new JsonResponse(
-            null,
-            Response::HTTP_NO_CONTENT,
-            ['location' => $location]
+            $jsonUser,
+            Response::HTTP_OK,
+            ['location' => $location],
+            true
         );
 
     }
